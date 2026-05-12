@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Masterclass: NotebookLM & Gemini Gems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Prompt', sans-serif; }
+        .lesson-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1e40af; }
+        .lesson-content p { margin-bottom: 1rem; line-height: 1.6; color: #374151; }
+        .lesson-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #374151; }
+        .lesson-content li { margin-bottom: 0.5rem; }
+        
+        /* Gamification Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: popIn 0.5s ease-out forwards; }
+        .badge-locked { filter: grayscale(100%); opacity: 0.4; }
+        
+        /* Certificate Print Styles */
+        @media print {
+            body { display: block; overflow: visible; background: white; }
+            body > *:not(#certificate-modal) { display: none !important; }
+            #certificate-modal { 
+                display: flex !important; 
+                position: relative; 
+                inset: auto; 
+                background: white !important;
+                padding: 0;
+            }
+            #certificate-content { 
+                box-shadow: none !important; 
+                border: 10px double #1e3a8a !important; 
+                width: 100%; 
+                max-width: none;
+                height: auto;
+                page-break-inside: avoid;
+            }
+            .no-print { display: none !important; }
+            @page { size: A4 landscape; margin: 15mm; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex overflow-hidden">
+
+    <!-- Login Overlay -->
+    <div id="login-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-8">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-graduation-cap text-3xl text-blue-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบ LMS</h1>
+                <p class="text-gray-500 mt-2">กรุณากรอกข้อมูลเพื่อบันทึกประวัติการเรียน</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
+                    <input type="text" id="user-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" placeholder="สมชาย ใจดี">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
+                    <input type="email" id="user-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" placeholder="somchai@example.com">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors flex justify-center items-center gap-2">
+                    <span>เริ่มเรียนเลย</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 flex flex-col hidden md:flex z-10">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-robot text-blue-600"></i> AI Masterclass
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">NotebookLM & Gemini</p>
+        </div>
+        
+        <div class="p-4 bg-blue-50 text-sm">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-gray-600">ผู้เรียน: <span id="display-name" class="font-semibold text-blue-700"></span></span>
+                <span id="user-level-badge" class="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-300 shadow-sm"><i class="fas fa-star text-yellow-500 mr-1"></i>Lv.1 Novice</span>
+            </div>
+            
+            <!-- EXP Bar -->
+            <div class="mt-3">
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-gray-500 font-medium">EXP</span>
+                    <span class="text-blue-700 font-bold"><span id="current-exp">0</span> / <span id="next-level-exp">50</span></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div id="exp-bar" class="bg-yellow-400 h-1.5 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Course Progress -->
+            <div class="mt-3 pt-3 border-t border-blue-100">
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-gray-500">ความคืบหน้าคอร์ส</span>
+                    <span class="text-gray-700"><span id="progress-text">0</span>%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div id="progress-bar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <!-- ปุ่มดูเกียรติบัตร จะโชว์เมื่อเรียนจบ -->
+                <button id="view-cert-btn" onclick="showCertificate()" class="mt-4 w-full py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white rounded-lg shadow-sm font-medium text-sm hidden transition-all duration-300">
+                    <i class="fas fa-award mr-1"></i> ดูเกียรติบัตร
+                </button>
+            </div>
+        </div>
+
+        <!-- Badges Section -->
+        <div class="p-4 border-b border-gray-200 bg-white">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">My Badges</h3>
+            <div id="badges-container" class="flex gap-2 justify-center">
+                <!-- Badges injected by JS -->
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-4">
+            <nav id="lesson-list" class="space-y-1 px-3">
+                <!-- Lessons will be generated here by JS -->
+            </nav>
+        </div>
+        <div class="p-4 border-t border-gray-200">
+            <button onclick="logout()" class="w-full py-2 px-4 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm font-medium transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen relative">
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-20">
+            <h2 class="text-lg font-bold text-gray-800"><i class="fas fa-robot text-blue-600 mr-2"></i> AI Masterclass</h2>
+            <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-10 scroll-smooth">
+            <div class="max-w-3xl mx-auto">
+                <div id="lesson-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12">
+                    <!-- Lesson content will be injected here -->
+                    <div class="animate-pulse flex flex-col space-y-4">
+                        <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                    </div>
+                </div>
+
+                <!-- Action Bar -->
+                <div id="action-bar" class="mt-8 flex justify-between items-center hidden">
+                    <button id="prev-btn" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors hidden">
+                        <i class="fas fa-chevron-left mr-2"></i> บทก่อนหน้า
+                    </button>
+                    <div class="flex-1"></div>
+                    <button id="complete-btn" class="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> <span>ทำเครื่องหมายว่าเรียนจบ</span>
+                    </button>
+                    <button id="next-btn" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hidden">
+                        บทถัดไป <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <!-- System Status -->
+                <div id="system-status" class="mt-4 text-center text-sm text-gray-500 opacity-0 transition-opacity duration-300">
+                    กำลังบันทึกข้อมูล...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="mobile-sidebar-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-30 hidden md:hidden"></div>
+
+    <!-- Achievement Modal -->
+    <div id="achievement-modal" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center pointer-events-none">
+        <div id="achievement-card" class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center transform scale-50 opacity-0 transition-all duration-300">
+            <div id="achievement-icon-bg" class="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-inner text-4xl">
+                <i id="achievement-icon" class="fas fa-trophy text-white"></i>
+            </div>
+            <h2 id="achievement-title" class="text-2xl font-bold text-gray-800 mb-2">Level Up!</h2>
+            <p id="achievement-desc" class="text-gray-600 mb-6">คุณได้เลื่อนขั้นเป็น Lv.2 Explorer แล้ว!</p>
+            <div class="text-sm font-bold text-yellow-500 bg-yellow-50 inline-block px-4 py-2 rounded-full border border-yellow-200">
+                +<span id="achievement-exp">50</span> EXP
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificate-modal" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-[60] hidden flex flex-col items-center justify-center p-4">
+        <div id="certificate-content" class="bg-white p-10 md:p-16 rounded-lg shadow-2xl max-w-4xl w-full text-center relative border-[12px] border-double border-blue-900">
+            <div class="absolute top-4 right-4 no-print text-gray-400 hover:text-gray-700 cursor-pointer" onclick="closeCertificate()">
+                <i class="fas fa-times text-2xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-2 mt-4" style="font-family: 'Times New Roman', serif;">Certificate of Completion</h1>
+            <p class="text-lg text-gray-600 mb-8 mt-6">ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</p>
+            <h2 id="cert-name" class="text-3xl md:text-4xl font-bold text-gray-800 border-b-2 border-gray-300 inline-block pb-2 px-10 mb-8">ชื่อ นามสกุล</h2>
+            <p class="text-lg text-gray-600 mb-4">ได้ผ่านการอบรมและสำเร็จหลักสูตร</p>
+            <h3 class="text-2xl md:text-3xl font-bold text-blue-700 mb-12">AI Masterclass: NotebookLM & Gemini Gems</h3>
+            <div class="flex justify-between items-end mt-8">
+                <div class="text-center">
+                    <p id="cert-date" class="text-gray-800 font-medium border-b border-gray-400 px-4 pb-1"></p>
+                    <p class="text-sm text-gray-500 mt-1">วันที่สำเร็จการศึกษา</p>
+                </div>
+                <div class="text-center px-4">
+                    <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-yellow-400 shadow-sm">
+                        <i class="fas fa-award text-4xl text-yellow-600"></i>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-800 font-medium border-b border-gray-400 px-4 pb-1">AI Masterclass</p>
+                    <p class="text-sm text-gray-500 mt-1">ผู้รับรอง</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 flex gap-4 no-print flex-col sm:flex-row">
+            <button onclick="printCertificate()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow transition-colors flex items-center justify-center">
+                <i class="fas fa-print mr-2"></i>พิมพ์ / ดาวน์โหลด PDF
+            </button>
+            <button onclick="closeCertificate()" class="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg shadow transition-colors">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // การตั้งค่าระบบ (Configuration)
+        // ==========================================
+        
+        // ** สำคัญมาก: นำ URL ของ Web App จาก Google Apps Script มาใส่ที่นี่ **
+        // ถ้าปล่อยว่างไว้ ระบบจะทำงานในโหมด "จำลอง" (Mock mode) เก็บข้อมูลใน LocalStorage แทน
+        const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbyvQuGc82mZ5zHl7TDQolje4RYmhGsdHnOm7n53C8SLsSvJCcX8NxV-1K2NilOqVz/exec"; 
+
+        // ==========================================
+        // ข้อมูลบทเรียน (Curriculum)
+        // ==========================================
+        const lessons = [
+            {
+                id: "lesson_1",
+                title: "บทที่ 1: รู้จักกับ NotebookLM",
+                icon: "fa-book",
+                content: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 1: รู้จักกับ NotebookLM ผู้ช่วยสรุปข้อมูลอัจฉริยะ</h1>
+                    <div class="lesson-content">
+                        <p><strong>NotebookLM</strong> เป็นโปรเจกต์ทดลองจาก Google ที่ออกแบบมาเพื่อเป็นผู้ช่วยส่วนตัวในการอ่าน สรุป และค้นหาข้อมูลจากเอกสารของคุณเอง โดยใช้พลังของ AI (Gemini) ทำให้มันแตกต่างจากแชตบอตทั่วไปตรงที่ "มันจะตอบคำถามโดยอ้างอิงจากแหล่งข้อมูลที่คุณให้มันเท่านั้น" ลดปัญหา AI มั่วข้อมูล (Hallucination)</p>
+                        
+                        <h2>จุดเด่นของ NotebookLM</h2>
+                        <ul>
+                            <li><strong>Source Grounding:</strong> เชื่อถือได้ 100% เพราะตอบคำถามโดยอ้างอิงจากไฟล์ PDF, Google Docs, Slides หรือลิงก์ที่คุณอัปโหลด</li>
+                            <li><strong>Citation (การอ้างอิง):</strong> ทุกคำตอบจะมีตัวเลขกำกับ เพื่อบอกว่านำข้อมูลมาจากบรรทัดไหนในเอกสาร</li>
+                            <li><strong>Audio Overview:</strong> ฟีเจอร์สุดล้ำที่สามารถแปลงเอกสารอันน่าเบื่อของคุณ ให้กลายเป็นรายการพอดแคสต์ที่มีพิธีกร 2 คนจัดรายการพูดคุยกันเกี่ยวกับเนื้อหานั้นได้อย่างเป็นธรรมชาติ!</li>
+                        </ul>
+
+                        <h2>วิธีเริ่มต้นใช้งาน</h2>
+                        <ol class="list-decimal pl-6 space-y-2 text-gray-700 mb-4">
+                            <li>เข้าไปที่ <a href="https://notebooklm.google.com/" target="_blank" class="text-blue-600 underline">notebooklm.google.com</a></li>
+                            <li>คลิก "New Notebook" เพื่อสร้างโปรเจกต์ใหม่</li>
+                            <li>อัปโหลดแหล่งข้อมูล (Sources) เช่น ไฟล์ PDF งานวิจัย หรือบันทึกการประชุม</li>
+                            <li>เริ่มพิมพ์คำถามในกล่องแชตด้านล่าง หรือคลิกปุ่ม Generate Audio Overview เพื่อฟังพอดแคสต์</li>
+                        </ol>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6 rounded-r">
+                            <p class="text-sm text-blue-800 m-0"><i class="fas fa-lightbulb mr-2"></i> <strong>Tip:</strong> คุณสามารถบันทึกคำตอบที่ AI ตอบกลับมาเป็น "Notes" (บันทึกย่อ) เพื่อเก็บรวบรวมไอเดียไว้ใช้เขียนบทความในภายหลังได้</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: "lesson_2",
+                title: "บทที่ 2: เทคนิคการใช้งาน NotebookLM ขั้นสูง",
+                icon: "fa-layer-group",
+                content: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 2: เทคนิคการใช้งาน NotebookLM ขั้นสูง</h1>
+                    <div class="lesson-content">
+                        <p>หลังจากที่คุณอัปโหลดเอกสารแล้ว NotebookLM จะมีเครื่องมืออัตโนมัติ (Suggested actions) ที่ช่วยจัดการข้อมูลได้อย่างรวดเร็ว ลองมาดูเทคนิคที่จะช่วยให้คุณดึงศักยภาพสูงสุดออกมา</p>
+                        
+                        <h2>1. การสร้างเอกสารอัตโนมัติ (Study Guide / Briefing Doc)</h2>
+                        <p>คุณไม่ต้องพิมพ์ prompt เองเสมอไป เพียงเลือกเอกสารที่อัปโหลดไว้ แล้วคลิกที่ฟีเจอร์:</p>
+                        <ul>
+                            <li><strong>Study Guide:</strong> สร้างคู่มืออ่านสอบ มีคำถามปรนัยและอัตนัยพร้อมเฉลย</li>
+                            <li><strong>FAQ:</strong> สกัดคำถามที่พบบ่อยจากเอกสาร</li>
+                            <li><strong>Briefing Document:</strong> สรุปประเด็นสำคัญสำหรับผู้บริหาร ภายใน 1 หน้า</li>
+                        </ul>
+
+                        <h2>2. การเลือก Source เฉพาะเจาะจง</h2>
+                        <p>หากคุณอัปโหลดเอกสารไว้ 10 ไฟล์ แต่ต้องการถามข้อมูลที่อ้างอิงจากแค่ 2 ไฟล์ ให้ทำการ <strong>"ติ๊กเลือก"</strong> เฉพาะไฟล์นั้นๆ ในแถบ Sources ด้านซ้ายมือ AI จะโฟกัสแค่ข้อมูลที่คุณเลือก ทำให้ได้คำตอบที่แม่นยำยิ่งขึ้น</p>
+
+                        <h2>3. การสร้างโครงร่างบทความ (Outline) จาก Notes</h2>
+                        <p>เมื่อคุณค้นคว้าและบันทึกข้อมูลต่างๆ ไว้ในส่วนของ Notes แล้ว คุณสามารถเลือก Notes หลายๆ อันพร้อมกัน แล้วสั่งให้ NotebookLM <em>"สร้างโครงร่างบทความ (Outline) จาก Notes ที่เลือก"</em> ได้ทันที เหมาะมากสำหรับนักเขียนหรือนักวิจัย</p>
+                    </div>
+                `
+            },
+            {
+                id: "lesson_3",
+                title: "บทที่ 3: แนะนำ Gemini Gems",
+                icon: "fa-gem",
+                content: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 3: แนะนำ Gemini Gems ผู้เชี่ยวชาญส่วนตัว</h1>
+                    <div class="lesson-content">
+                        <p><strong>Gemini Gems</strong> คือฟีเจอร์สำหรับผู้ใช้งาน Gemini Advanced ที่ให้คุณสามารถ "สร้างและปรับแต่ง AI Assistant" เฉพาะทางของคุณเองได้ (คล้ายกับ Custom GPTs ของฝั่ง OpenAI)</p>
+                        
+                        <h2>ทำไมถึงต้องใช้ Gems?</h2>
+                        <p>แทนที่คุณจะต้องมานั่งพิมพ์ Prompt ยาวๆ หรือบอกให้ AI สวมบทบาทใหม่ทุกครั้งที่คุณเริ่มแชต คุณสามารถสร้าง Gem ไว้ล่วงหน้าได้เลย เช่น:</p>
+                        <ul>
+                            <li><strong>Gem ครูสอนภาษาอังกฤษ:</strong> ที่คอยแก้แกรมม่าและอธิบายเหตุผลให้คุณฟังทุกครั้งที่คุณพิมพ์หา</li>
+                            <li><strong>Gem ผู้เชี่ยวชาญด้านโค้ด:</strong> ที่เน้นเขียน Python ตามสไตล์ Clean Code เสมอ</li>
+                            <li><strong>Gem นักวิจารณ์งานเขียน:</strong> ที่จะคอยสับและวิจารณ์บทความของคุณอย่างตรงไปตรงมา</li>
+                        </ul>
+
+                        <h2>Pre-made Gems (Gems สำเร็จรูป)</h2>
+                        <p>Google ได้เตรียม Gems พื้นฐานที่ทรงพลังไว้ให้คุณใช้งานได้ทันที ได้แก่:</p>
+                        <ul>
+                            <li><strong>Learning coach:</strong> ผู้ช่วยอธิบายเรื่องยากๆ ให้เข้าใจง่าย</li>
+                            <li><strong>Brainstormer:</strong> ช่วยคิดไอเดียสดใหม่ ไอเดียการตลาด</li>
+                            <li><strong>Career guide:</strong> ช่วยซ้อมสัมภาษณ์งานและปรับปรุงเรซูเม่</li>
+                            <li><strong>Coding partner:</strong> ผู้ช่วยเขียนและแก้ไขโค้ด</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: "lesson_4",
+                title: "บทที่ 4: การสร้าง Custom Gem ของคุณเอง",
+                icon: "fa-hammer",
+                content: `
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 4: ลงมือสร้าง Custom Gem ของคุณเอง</h1>
+                    <div class="lesson-content">
+                        <p>การสร้าง Gem ที่ดี หัวใจสำคัญอยู่ที่การเขียน <strong>"Instructions" (คำสั่งกำกับ)</strong> ที่ชัดเจนและครอบคลุม</p>
+                        
+                        <h2>ขั้นตอนการสร้าง</h2>
+                        <ol class="list-decimal pl-6 space-y-2 text-gray-700 mb-6">
+                            <li>เข้าไปที่ Gemini (Advanced) ที่เมนูด้านซ้ายคลิกที่ <strong>"Gem manager"</strong></li>
+                            <li>คลิก <strong>"New Gem"</strong></li>
+                            <li>ตั้งชื่อ Gem (เช่น "นักการตลาดโซเชียล")</li>
+                            <li>ใส่ <strong>Instructions</strong> ซึ่งเป็นหัวใจสำคัญ (ดูโครงสร้างด้านล่าง)</li>
+                        </ol>
+
+                        <h2>โครงสร้างของ Instructions ที่ดี</h2>
+                        <p>ควรประกอบด้วย 4 ส่วนหลัก (Framework: Role-Task-Context-Format)</p>
+                        <div class="bg-gray-800 text-gray-100 p-4 rounded-lg font-mono text-sm mb-4">
+                            [1. บทบาท] คุณคือ Content Creator ผู้เชี่ยวชาญด้าน TikTok มีประสบการณ์ 5 ปี<br><br>
+                            [2. งานหลัก] หน้าที่ของคุณคือการนำข้อมูลดิบที่ฉันให้ ไปเขียนเป็นสคริปต์วิดีโอสั้น ไม่เกิน 1 นาที<br><br>
+                            [3. บริบท/ข้อควรระวัง] กลุ่มเป้าหมายคือวัยรุ่นอายุ 15-24 ปี ต้องใช้ภาษาที่สนุกสนาน มีการเล่นมุกตลก ห้ามใช้คำศัพท์วิชาการที่น่าเบื่อ<br><br>
+                            [4. รูปแบบผลลัพธ์] กรุณาตอบกลับในรูปแบบตาราง 2 คอลัมน์ (วินาทีที่ / บทพูด+ภาพที่ต้องขึ้น)
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-6 rounded-r">
+                            <p class="text-sm text-green-800 m-0"><i class="fas fa-check-circle mr-2"></i> <strong>บทสรุป:</strong> ทั้ง NotebookLM และ Gemini Gems เป็นเครื่องมือที่ช่วยเพิ่ม Productivity อย่างมหาศาล หากคุณใช้ NotebookLM สำหรับ <strong>"การทำความเข้าใจและการวิจัย"</strong> และใช้ Gemini Gems สำหรับ <strong>"การลงมือผลิตชิ้นงาน"</strong> คุณจะกลายเป็นซูเปอร์พนักงานในยุค AI อย่างแท้จริง!</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // ==========================================
+        // ระบบ Gamification (Levels & Badges)
+        // ==========================================
+        const LEVELS = [
+            { level: 1, title: 'AI Novice', expReq: 0 },
+            { level: 2, title: 'Prompt Explorer', expReq: 50 },
+            { level: 3, title: 'Gemini Adept', expReq: 100 },
+            { level: 4, title: 'AI Master', expReq: 150 },
+            { level: 5, title: 'Grandmaster', expReq: 200 }
+        ];
+
+        const BADGES = [
+            { id: 'first_step', name: 'ก้าวแรกสู่ AI', icon: 'fa-seedling', bg: 'bg-green-500', reqLessons: 1 },
+            { id: 'halfway', name: 'มาครึ่งทางแล้ว', icon: 'fa-fire', bg: 'bg-orange-500', reqLessons: 2 },
+            { id: 'graduate', name: 'ผู้เชี่ยวชาญ AI', icon: 'fa-graduation-cap', bg: 'bg-purple-600', reqLessons: 4 }
+        ];
+
+        // ==========================================
+        // ตัวแปรสถานะของแอปพลิเคชัน (State)
+        // ==========================================
+        let currentUser = null;
+        let currentLessonIndex = 0;
+        let completedLessons = [];
+        let userExp = 0;
+        let unlockedBadges = [];
+
+        // ==========================================
+        // DOM Elements
+        // ==========================================
+        const loginModal = document.getElementById('login-modal');
+        const loginForm = document.getElementById('login-form');
+        const displayName = document.getElementById('display-name');
+        const lessonList = document.getElementById('lesson-list');
+        const lessonContainer = document.getElementById('lesson-container');
+        const actionBar = document.getElementById('action-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const completeBtn = document.getElementById('complete-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const systemStatus = document.getElementById('system-status');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.querySelector('aside');
+        const mobileBackdrop = document.getElementById('mobile-sidebar-backdrop');
+        
+        // Gamification DOM
+        const expBar = document.getElementById('exp-bar');
+        const currentExpEl = document.getElementById('current-exp');
+        const nextLevelExpEl = document.getElementById('next-level-exp');
+        const userLevelBadge = document.getElementById('user-level-badge');
+        const badgesContainer = document.getElementById('badges-container');
+        const achievementModal = document.getElementById('achievement-modal');
+        const achievementCard = document.getElementById('achievement-card');
+        
+        // Certificate DOM
+        const certificateModal = document.getElementById('certificate-modal');
+        const viewCertBtn = document.getElementById('view-cert-btn');
+
+        // ==========================================
+        // การทำงานหลัก (Core Functions)
+        // ==========================================
+
+        function initApp() {
+            // เช็คว่ามีผู้ใช้ล็อกอินอยู่หรือไม่ (ดึงจาก LocalStorage เล็กน้อยเพื่อ UX)
+            const savedUser = localStorage.getItem('lms_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                hideLogin();
+                loadUserData();
+            }
+
+            renderSidebar();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('user-name').value;
+                const email = document.getElementById('user-email').value;
+                login(name, email);
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentLessonIndex > 0) loadLesson(currentLessonIndex - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentLessonIndex < lessons.length - 1) loadLesson(currentLessonIndex + 1);
+            });
+
+            completeBtn.addEventListener('click', markLessonComplete);
+
+            // Mobile menu toggles
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('absolute');
+                sidebar.classList.toggle('h-full');
+                mobileBackdrop.classList.toggle('hidden');
+            });
+
+            mobileBackdrop.addEventListener('click', () => {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('absolute');
+                sidebar.classList.remove('h-full');
+                mobileBackdrop.classList.add('hidden');
+            });
+        }
+
+        async function login(name, email) {
+            currentUser = { name, email };
+            localStorage.setItem('lms_user', JSON.stringify(currentUser));
+            displayName.textContent = name;
+            hideLogin();
+            
+            // บันทึก Log การเข้าสู่ระบบไปยัง Google Sheet
+            await sendTrackingData('login', 'system');
+            
+            // โหลดประวัติการเรียน (ถ้ามี)
+            loadUserData();
+        }
+
+        function logout() {
+            localStorage.removeItem('lms_user');
+            localStorage.removeItem(`lms_completed_${currentUser.email}`);
+            localStorage.removeItem(`lms_exp_${currentUser.email}`);
+            currentUser = null;
+            completedLessons = [];
+            userExp = 0;
+            unlockedBadges = [];
+            loginModal.classList.remove('hidden');
+            setTimeout(() => loginModal.classList.remove('opacity-0'), 50);
+            
+            // Clear inputs
+            document.getElementById('user-name').value = '';
+            document.getElementById('user-email').value = '';
+        }
+
+        function hideLogin() {
+            displayName.textContent = currentUser.name;
+            loginModal.classList.add('opacity-0');
+            setTimeout(() => loginModal.classList.add('hidden'), 300);
+        }
+
+        function loadUserData() {
+            // ในระบบจริง ควร Fetch สถานะมาจาก Google Sheet
+            // แต่เพื่อความรวดเร็วของ UX เราจะดึงจาก LocalStorage ก่อนเป็นหลัก
+            const savedProgress = localStorage.getItem(`lms_completed_${currentUser.email}`);
+            if (savedProgress) {
+                completedLessons = JSON.parse(savedProgress);
+            } else {
+                completedLessons = [];
+            }
+            
+            // Load Gamification Data
+            const savedExp = localStorage.getItem(`lms_exp_${currentUser.email}`);
+            if (savedExp) {
+                userExp = parseInt(savedExp, 10);
+            } else {
+                userExp = completedLessons.length * 50; // ชดเชย EXP ย้อนหลังให้
+            }
+            
+            checkGamificationState(false); // อัปเดต UI โดยไม่ต้องโชว์ Popup
+            updateProgress();
+            renderSidebar();
+            loadLesson(0); // โหลดบทแรกเสมอเมื่อเข้าสู่ระบบ
+        }
+
+        function renderSidebar() {
+            lessonList.innerHTML = '';
+            lessons.forEach((lesson, index) => {
+                const isCompleted = completedLessons.includes(lesson.id);
+                const isActive = index === currentLessonIndex;
+                
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-4 py-3 rounded-lg mb-1 flex items-center transition-colors ${
+                    isActive ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-100 text-gray-700'
+                }`;
+                btn.onclick = () => {
+                    loadLesson(index);
+                    if(window.innerWidth < 768) { // ปิด sidebar บนมือถือเมื่อกดเลือก
+                        sidebar.classList.add('hidden');
+                        mobileBackdrop.classList.add('hidden');
+                    }
+                };
+                
+                btn.innerHTML = `
+                    <div class="flex items-center justify-center w-8 h-8 rounded-full mr-3 ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}">
+                        <i class="fas ${isCompleted ? 'fa-check' : lesson.icon} text-sm"></i>
+                    </div>
+                    <span class="flex-1 text-sm font-medium truncate">${lesson.title}</span>
+                `;
+                lessonList.appendChild(btn);
+            });
+        }
+
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = lessons[index];
+            
+            // แสดงเนื้อหา
+            lessonContainer.innerHTML = lesson.content;
+            actionBar.classList.remove('hidden');
+            
+            // จัดการปุ่ม Previous / Next
+            if (index === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            if (index === lessons.length - 1) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+
+            // จัดการปุ่ม Complete
+            updateCompleteButtonState();
+
+            // เลื่อนจอขึ้นบนสุด
+            document.querySelector('main > div').scrollTop = 0;
+
+            // บันทึก Log การเข้าอ่านบทเรียน
+            sendTrackingData('view_lesson', lesson.id);
+            renderSidebar();
+        }
+
+        function updateCompleteButtonState() {
+            const lessonId = lessons[currentLessonIndex].id;
+            if (completedLessons.includes(lessonId)) {
+                completeBtn.innerHTML = `<i class="fas fa-check-double"></i> <span>เรียนจบแล้ว</span>`;
+                completeBtn.classList.replace('bg-green-600', 'bg-gray-400');
+                completeBtn.classList.replace('hover:bg-green-700', 'cursor-not-allowed');
+                completeBtn.disabled = true;
+                
+                // ถ้าเรียนจบแล้วให้โชว์ปุ่มถัดไป
+                if (currentLessonIndex < lessons.length - 1) {
+                    nextBtn.classList.remove('hidden');
+                    completeBtn.classList.add('hidden');
+                } else {
+                    nextBtn.classList.add('hidden');
+                    completeBtn.classList.remove('hidden');
+                }
+            } else {
+                completeBtn.innerHTML = `<i class="fas fa-check-circle"></i> <span>ทำเครื่องหมายว่าเรียนจบ</span>`;
+                completeBtn.classList.replace('bg-gray-400', 'bg-green-600');
+                completeBtn.classList.replace('cursor-not-allowed', 'hover:bg-green-700');
+                completeBtn.disabled = false;
+                completeBtn.classList.remove('hidden');
+                
+                // ซ่อนปุ่มถัดไปจนกว่าจะกดเรียนจบ
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        async function markLessonComplete() {
+            const lessonId = lessons[currentLessonIndex].id;
+            if (!completedLessons.includes(lessonId)) {
+                // อัปเดต UI ชั่วคราว
+                completeBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>กำลังบันทึก...</span>`;
+                
+                // ส่งข้อมูลไปบันทึก
+                const success = await sendTrackingData('complete_lesson', lessonId);
+                
+                if (success) {
+                    completedLessons.push(lessonId);
+                    localStorage.setItem(`lms_completed_${currentUser.email}`, JSON.stringify(completedLessons));
+                    
+                    // Gamification: เพิ่ม EXP
+                    const gainedExp = 50;
+                    userExp += gainedExp;
+                    localStorage.setItem(`lms_exp_${currentUser.email}`, userExp);
+                    
+                    updateProgress();
+                    updateCompleteButtonState();
+                    renderSidebar();
+                    
+                    // ตรวจสอบ Level Up & Badges (แสดง Popup)
+                    checkGamificationState(true, gainedExp);
+
+                    // เลื่อนไปบทถัดไปอัตโนมัติ (ถ้ามี)
+                    if (currentLessonIndex < lessons.length - 1) {
+                        setTimeout(() => loadLesson(currentLessonIndex + 1), 2500); // รอให้ popup แสดงจบก่อน
+                    } else if (completedLessons.length === lessons.length) {
+                        // ถ้าจบบทสุดท้าย และเรียนครบทุกบทแล้ว จะเด้งเกียรติบัตรขึ้นมาหลังจากโชว์ Popup สำเร็จ
+                        setTimeout(() => showCertificate(), 3000); 
+                    }
+                } else {
+                    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+                    updateCompleteButtonState(); // คืนค่าปุ่ม
+                }
+            }
+        }
+
+        function updateProgress() {
+            const percentage = Math.round((completedLessons.length / lessons.length) * 100);
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = percentage;
+            
+            // แสดงปุ่มดูเกียรติบัตรเมื่อเรียนครบ 100%
+            if (percentage === 100) {
+                viewCertBtn.classList.remove('hidden');
+                viewCertBtn.classList.add('animate-pulse');
+                setTimeout(() => viewCertBtn.classList.remove('animate-pulse'), 3000); // หยุดกะพริบหลัง 3 วิ
+            } else {
+                viewCertBtn.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // Certificate Functions
+        // ==========================================
+        function showCertificate() {
+            // เซ็ตชื่อ
+            document.getElementById('cert-name').textContent = currentUser.name;
+            
+            // เซ็ตวันที่ปัจจุบันเป็นภาษาไทย
+            const today = new Date();
+            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const formattedDate = `${today.getDate()} ${thaiMonths[today.getMonth()]} ${today.getFullYear() + 543}`;
+            document.getElementById('cert-date').textContent = formattedDate;
+            
+            // เปิด Modal
+            certificateModal.classList.remove('hidden');
+            
+            // บันทึก Log การดูเกียรติบัตร
+            sendTrackingData('view_certificate', 'system');
+        }
+
+        function closeCertificate() {
+            certificateModal.classList.add('hidden');
+        }
+        
+        function printCertificate() {
+            // ปรับ Title ของเว็บชั่วคราว เพื่อให้ตอน Save PDF ชื่อไฟล์จะได้เป็นชื่อเกียรติบัตร
+            const originalTitle = document.title;
+            document.title = `Certificate_AI_Masterclass_${currentUser.name}`;
+            window.print();
+            document.title = originalTitle; // คืนค่า Title เดิม
+        }
+
+        // ==========================================
+        // Gamification Logic
+        // ==========================================
+        function checkGamificationState(showPopup = false, gainedExp = 0) {
+            // 1. คำนวณ Level ปัจจุบัน
+            let currentLevelObj = LEVELS[0];
+            let nextLevelObj = LEVELS[LEVELS.length - 1];
+            
+            for (let i = 0; i < LEVELS.length; i++) {
+                if (userExp >= LEVELS[i].expReq) {
+                    currentLevelObj = LEVELS[i];
+                    nextLevelObj = LEVELS[i + 1] || LEVELS[i]; // หากเลเวลตัน (Max)
+                }
+            }
+
+            // 2. คำนวณ Badges ที่ปลดล็อก
+            const newUnlockedBadges = [];
+            BADGES.forEach(badge => {
+                if (completedLessons.length >= badge.reqLessons) {
+                    if (!unlockedBadges.includes(badge.id)) {
+                        newUnlockedBadges.push(badge);
+                        unlockedBadges.push(badge.id);
+                    }
+                }
+            });
+
+            // 3. อัปเดต UI (EXP Bar และ Badge)
+            currentExpEl.textContent = userExp;
+            if (currentLevelObj.level === nextLevelObj.level) {
+                nextLevelExpEl.textContent = "MAX";
+                expBar.style.width = "100%";
+            } else {
+                nextLevelExpEl.textContent = nextLevelObj.expReq;
+                const expInCurrentLevel = userExp - currentLevelObj.expReq;
+                const expNeededForNext = nextLevelObj.expReq - currentLevelObj.expReq;
+                const progressPct = (expInCurrentLevel / expNeededForNext) * 100;
+                expBar.style.width = `${progressPct}%`;
+            }
+
+            userLevelBadge.innerHTML = `<i class="fas fa-star text-yellow-500 mr-1"></i>Lv.${currentLevelObj.level} ${currentLevelObj.title}`;
+            
+            renderBadges();
+
+            // 4. แสดง Popups ความสำเร็จ
+            if (showPopup) {
+                const previousExp = userExp - gainedExp;
+                const previousLevelObj = LEVELS.slice().reverse().find(l => previousExp >= l.expReq) || LEVELS[0];
+                
+                // ลำดับความสำคัญในการโชว์ Popup: Level Up -> ปลดล็อก Badge -> เรียนจบปกติ
+                if (currentLevelObj.level > previousLevelObj.level) {
+                    triggerAchievementPopup('Level Up!', `คุณได้เลื่อนขั้นเป็น Lv.${currentLevelObj.level} ${currentLevelObj.title}`, 'fa-level-up-alt', 'bg-yellow-500', gainedExp);
+                    sendTrackingData('level_up', `Level ${currentLevelObj.level}`);
+                } else if (newUnlockedBadges.length > 0) {
+                    const latestBadge = newUnlockedBadges[0];
+                    triggerAchievementPopup('Badge Unlocked!', `ได้รับเหรียญตรา: ${latestBadge.name}`, latestBadge.icon, latestBadge.bg, gainedExp);
+                    sendTrackingData('badge_earned', latestBadge.id);
+                } else {
+                    triggerAchievementPopup('Lesson Completed!', 'เยี่ยมมาก! คุณเรียนจบบทนี้แล้ว', 'fa-check-circle', 'bg-green-500', gainedExp);
+                }
+            }
+        }
+
+        function renderBadges() {
+            badgesContainer.innerHTML = '';
+            BADGES.forEach(badge => {
+                const isUnlocked = unlockedBadges.includes(badge.id);
+                const badgeHtml = `
+                    <div class="relative group cursor-help">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm transition-all duration-300 ${isUnlocked ? badge.bg + ' transform hover:scale-110' : 'bg-gray-200 badge-locked'}">
+                            <i class="fas ${badge.icon} text-sm"></i>
+                        </div>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                            ${badge.name} ${!isUnlocked ? '(ยังไม่ปลดล็อก)' : ''}
+                        </div>
+                    </div>
+                `;
+                badgesContainer.innerHTML += badgeHtml;
+            });
+        }
+
+        function triggerAchievementPopup(title, desc, iconClass, bgClass, exp) {
+            const iconEl = document.getElementById('achievement-icon');
+            const iconBgEl = document.getElementById('achievement-icon-bg');
+            
+            document.getElementById('achievement-title').textContent = title;
+            document.getElementById('achievement-desc').textContent = desc;
+            document.getElementById('achievement-exp').textContent = exp;
+            
+            iconEl.className = `fas ${iconClass} text-white`;
+            iconBgEl.className = `w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-inner text-4xl ${bgClass}`;
+
+            achievementModal.classList.remove('hidden');
+            
+            // Trigger animation
+            setTimeout(() => {
+                achievementCard.classList.remove('scale-50', 'opacity-0');
+                achievementCard.classList.add('scale-100', 'opacity-100', 'animate-pop');
+            }, 50);
+
+            // Hide after 2.5 seconds
+            setTimeout(() => {
+                achievementCard.classList.remove('scale-100', 'opacity-100', 'animate-pop');
+                achievementCard.classList.add('scale-50', 'opacity-0');
+                setTimeout(() => {
+                    achievementModal.classList.add('hidden');
+                }, 300);
+            }, 2500);
+        }
+
+        function showSystemStatus(message) {
+            systemStatus.textContent = message;
+            systemStatus.classList.remove('opacity-0');
+            setTimeout(() => systemStatus.classList.add('opacity-0'), 3000);
+        }
+
+        // ==========================================
+        // API Communication (Google Apps Script)
+        // ==========================================
+        async function sendTrackingData(action, lessonId) {
+            const payload = {
+                timestamp: new Date().toISOString(),
+                name: currentUser.name,
+                email: currentUser.email,
+                action: action,
+                lessonId: lessonId
+            };
+
+            // หากยังไม่ได้เชื่อมต่อ Google App Script ให้ทำงานในโหมดจำลอง (Mock)
+            if (!GOOGLE_APP_SCRIPT_URL) {
+                console.log("[MOCK MODE] Data saved:", payload);
+                showSystemStatus("✅ บันทึกข้อมูลสำเร็จ (Mock Mode)");
+                return true; 
+            }
+
+            try {
+                // ส่งแบบ text/plain เพื่อป้องกัน CORS Preflight issues บน GAS
+                const response = await fetch(GOOGLE_APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if(result.status === 'success') {
+                    showSystemStatus("✅ บันทึกข้อมูลขึ้นระบบคลาวด์สำเร็จ");
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error sending tracking data:", error);
+                showSystemStatus("❌ ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้");
+                // ยอมให้ทำงานต่อแบบ Offline เก็บใน LocalStorage
+                return true; 
+            }
+        }
+
+        // เริ่มต้นการทำงานของแอปพลิเคชัน
+        initApp();
+    </script>
+</body>
+</html>

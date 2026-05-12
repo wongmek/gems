@@ -251,56 +251,110 @@
         const lessons = [
             {
                 id: "lesson_1",
-                title: "บทที่ 1: รู้จักกับ NotebookLM",
+                title: "บทที่ 1: เริ่มต้นใช้งาน NotebookLM",
                 icon: "fa-book",
                 content: `
-                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 1: รู้จักกับ NotebookLM ผู้ช่วยสรุปข้อมูลอัจฉริยะ</h1>
-                    <div class="lesson-content">
-                        <p><strong>NotebookLM</strong> เป็นโปรเจกต์ทดลองจาก Google ที่ออกแบบมาเพื่อเป็นผู้ช่วยส่วนตัวในการอ่าน สรุป และค้นหาข้อมูลจากเอกสารของคุณเอง โดยใช้พลังของ AI (Gemini) ทำให้มันแตกต่างจากแชตบอตทั่วไปตรงที่ "มันจะตอบคำถามโดยอ้างอิงจากแหล่งข้อมูลที่คุณให้มันเท่านั้น" ลดปัญหา AI มั่วข้อมูล (Hallucination)</p>
-                        
-                        <h2>จุดเด่นของ NotebookLM</h2>
-                        <ul>
-                            <li><strong>Source Grounding:</strong> เชื่อถือได้ 100% เพราะตอบคำถามโดยอ้างอิงจากไฟล์ PDF, Google Docs, Slides หรือลิงก์ที่คุณอัปโหลด</li>
-                            <li><strong>Citation (การอ้างอิง):</strong> ทุกคำตอบจะมีตัวเลขกำกับ เพื่อบอกว่านำข้อมูลมาจากบรรทัดไหนในเอกสาร</li>
-                            <li><strong>Audio Overview:</strong> ฟีเจอร์สุดล้ำที่สามารถแปลงเอกสารอันน่าเบื่อของคุณ ให้กลายเป็นรายการพอดแคสต์ที่มีพิธีกร 2 คนจัดรายการพูดคุยกันเกี่ยวกับเนื้อหานั้นได้อย่างเป็นธรรมชาติ!</li>
-                        </ul>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">บทที่ 1: รู้จักและเริ่มต้นใช้งาน NotebookLM</h1>
+                    <p class="text-gray-600 mb-8 text-lg">NotebookLM คือผู้ช่วย AI จาก Google ที่จะช่วยคุณอ่าน สรุป และวิเคราะห์เอกสารของคุณเอง (Grounded AI) โดยไม่มั่วข้อมูล มาดูขั้นตอนการใช้งานกันครับ</p>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">สร้าง Notebook ใหม่</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ไปที่เว็บไซต์ <strong>notebooklm.google.com</strong> ล็อกอินด้วย Google Account จากนั้นคลิกที่ปุ่ม <span class="bg-gray-100 px-2 py-1 rounded text-sm border">New Notebook</span> เพื่อสร้างโปรเจกต์ใหม่</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=New+Notebook+Screen" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: หน้าจอสร้าง Notebook ใหม่</div>
+                            </div>
+                        </div>
 
-                        <h2>วิธีเริ่มต้นใช้งาน</h2>
-                        <ol class="list-decimal pl-6 space-y-2 text-gray-700 mb-4">
-                            <li>เข้าไปที่ <a href="https://notebooklm.google.com/" target="_blank" class="text-blue-600 underline">notebooklm.google.com</a></li>
-                            <li>คลิก "New Notebook" เพื่อสร้างโปรเจกต์ใหม่</li>
-                            <li>อัปโหลดแหล่งข้อมูล (Sources) เช่น ไฟล์ PDF งานวิจัย หรือบันทึกการประชุม</li>
-                            <li>เริ่มพิมพ์คำถามในกล่องแชตด้านล่าง หรือคลิกปุ่ม Generate Audio Overview เพื่อฟังพอดแคสต์</li>
-                        </ol>
-                        
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6 rounded-r">
-                            <p class="text-sm text-blue-800 m-0"><i class="fas fa-lightbulb mr-2"></i> <strong>Tip:</strong> คุณสามารถบันทึกคำตอบที่ AI ตอบกลับมาเป็น "Notes" (บันทึกย่อ) เพื่อเก็บรวบรวมไอเดียไว้ใช้เขียนบทความในภายหลังได้</p>
+                        <!-- Step 2 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">อัปโหลดแหล่งข้อมูล (Sources)</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ระบบจะให้คุณเพิ่ม <strong>Sources</strong> ซึ่งเป็นคลังความรู้สำหรับ Notebook นี้ คุณสามารถอัปโหลดได้ทั้ง:</p>
+                            <ul class="list-disc ml-10 text-gray-700 mb-4">
+                                <li>ไฟล์จากเครื่อง (PDF, .txt, Markdown)</li>
+                                <li>ไฟล์จาก Google Drive (Docs, Slides)</li>
+                                <li>ลิงก์เว็บไซต์ (Website URL) หรือ YouTube URL</li>
+                            </ul>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Upload+Sources+Menu" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: หน้าต่างการอัปโหลดไฟล์</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">พูดคุยกับเอกสาร (Chat & Citation)</h3>
+                            <p class="text-gray-700 ml-4 mb-4">เมื่ออัปโหลดเสร็จ ให้พิมพ์คำถามลงในกล่องแชทด้านล่าง AI จะตอบคำถามโดยอ้างอิงจากเอกสารของคุณเท่านั้น พร้อมใส่ <strong>[ตัวเลขอ้างอิง]</strong> ให้คุณคลิกกลับไปดูต้นฉบับได้ทันที</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Chat+Interface+%26+Citations" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: หน้าจอแชทและตัวเลขอ้างอิง (Citation)</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative border-l-4 border-l-purple-500">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg"><i class="fas fa-star"></i></div>
+                            <h3 class="text-xl font-bold text-purple-900 mb-3 ml-4">ฟีเจอร์เด็ด: แปลงเอกสารเป็น Podcast</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ไปที่แผง <strong>Notebook guide</strong> ด้านขวาบน มองหาส่วน <strong>Audio Overview</strong> แล้วคลิก <span class="bg-purple-100 text-purple-700 font-bold px-2 py-1 rounded text-sm">Generate</span> ระบบจะสร้างพอดแคสต์เสียงสนทนา 2 คน (ภาษาอังกฤษ) ที่สรุปเนื้อหาเอกสารคุณได้อย่างน่าทึ่ง!</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/f3e8ff/6b21a8?text=Audio+Overview+Panel" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-purple-600 font-medium">ภาพประกอบ: แผง Audio Overview</div>
+                            </div>
                         </div>
                     </div>
                 `
             },
             {
                 id: "lesson_2",
-                title: "บทที่ 2: เทคนิคการใช้งาน NotebookLM ขั้นสูง",
+                title: "บทที่ 2: เทคนิค NotebookLM ขั้นสูง",
                 icon: "fa-layer-group",
                 content: `
-                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 2: เทคนิคการใช้งาน NotebookLM ขั้นสูง</h1>
-                    <div class="lesson-content">
-                        <p>หลังจากที่คุณอัปโหลดเอกสารแล้ว NotebookLM จะมีเครื่องมืออัตโนมัติ (Suggested actions) ที่ช่วยจัดการข้อมูลได้อย่างรวดเร็ว ลองมาดูเทคนิคที่จะช่วยให้คุณดึงศักยภาพสูงสุดออกมา</p>
-                        
-                        <h2>1. การสร้างเอกสารอัตโนมัติ (Study Guide / Briefing Doc)</h2>
-                        <p>คุณไม่ต้องพิมพ์ prompt เองเสมอไป เพียงเลือกเอกสารที่อัปโหลดไว้ แล้วคลิกที่ฟีเจอร์:</p>
-                        <ul>
-                            <li><strong>Study Guide:</strong> สร้างคู่มืออ่านสอบ มีคำถามปรนัยและอัตนัยพร้อมเฉลย</li>
-                            <li><strong>FAQ:</strong> สกัดคำถามที่พบบ่อยจากเอกสาร</li>
-                            <li><strong>Briefing Document:</strong> สรุปประเด็นสำคัญสำหรับผู้บริหาร ภายใน 1 หน้า</li>
-                        </ul>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">บทที่ 2: เทคนิคการใช้งาน NotebookLM ขั้นสูง</h1>
+                    <p class="text-gray-600 mb-8 text-lg">มาดูวิธีดึงศักยภาพสูงสุดของ NotebookLM เพื่อใช้ในการวิเคราะห์ข้อมูลที่ซับซ้อน และจัดระเบียบความคิดกันครับ</p>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">สกัดข้อมูลด่วนด้วย Suggested Actions</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ในหน้าต่าง Notebook Guide (หรือเวลากดเลือก Source) จะมีปุ่มลัดให้ AI สร้างชิ้นงานให้ทันทีโดยไม่ต้องพิมพ์คำสั่งเอง ได้แก่:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ml-4 mb-4">
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><strong class="block text-blue-800">Study Guide</strong> สร้างคู่มืออ่านสอบ/สรุปเนื้อหา</div>
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><strong class="block text-blue-800">FAQ</strong> ดึงคำถามที่พบบ่อยพร้อมคำตอบ</div>
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><strong class="block text-blue-800">Briefing Doc</strong> สรุปเอกสารยาวๆ ให้เหลือ 1 หน้า</div>
+                            </div>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Suggested+Actions" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: เมนู Suggested Actions</div>
+                            </div>
+                        </div>
 
-                        <h2>2. การเลือก Source เฉพาะเจาะจง</h2>
-                        <p>หากคุณอัปโหลดเอกสารไว้ 10 ไฟล์ แต่ต้องการถามข้อมูลที่อ้างอิงจากแค่ 2 ไฟล์ ให้ทำการ <strong>"ติ๊กเลือก"</strong> เฉพาะไฟล์นั้นๆ ในแถบ Sources ด้านซ้ายมือ AI จะโฟกัสแค่ข้อมูลที่คุณเลือก ทำให้ได้คำตอบที่แม่นยำยิ่งขึ้น</p>
+                        <!-- Step 2 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">เจาะจงข้อมูลด้วย Source Filtering</h3>
+                            <p class="text-gray-700 ml-4 mb-4">หากคุณมีเอกสาร 20 ไฟล์ แต่อยากถามข้อมูลที่เกี่ยวเนื่องกับไฟล์เพียง 2-3 ไฟล์เท่านั้น ให้ทำการ <strong>"คลิกเลือกที่ช่องวงกลมหน้าชื่อไฟล์"</strong> ในแถบ Sources ด้านซ้ายมือ AI จะตอบคำถามโดยค้นหาเฉพาะจากไฟล์ที่คุณเลือกเท่านั้น</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Source+Filtering" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: การเลือกเฉพาะบางไฟล์ (Source Filtering)</div>
+                            </div>
+                        </div>
 
-                        <h2>3. การสร้างโครงร่างบทความ (Outline) จาก Notes</h2>
-                        <p>เมื่อคุณค้นคว้าและบันทึกข้อมูลต่างๆ ไว้ในส่วนของ Notes แล้ว คุณสามารถเลือก Notes หลายๆ อันพร้อมกัน แล้วสั่งให้ NotebookLM <em>"สร้างโครงร่างบทความ (Outline) จาก Notes ที่เลือก"</em> ได้ทันที เหมาะมากสำหรับนักเขียนหรือนักวิจัย</p>
+                        <!-- Step 3 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">สร้างบทความใหม่จากระบบ Notes</h3>
+                            <p class="text-gray-700 ml-4 mb-4">คำตอบไหนของ AI ที่คุณชอบ คุณสามารถกดปุ่ม <strong>"Pin to note" (รูปหมุด)</strong> เพื่อเก็บไว้ในกระดานด้านขวาได้ จากนั้นคุณสามารถคลิกเลือก Notes หลายๆ อันพร้อมกัน แล้วกดปุ่ม <span class="bg-gray-100 border px-2 py-1 rounded text-sm">Create outline</span> เพื่อให้ AI เอาไอเดียทั้งหมดมาปั้นเป็นโครงร่างบทความให้คุณ</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Notes+%26+Outline" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: การเลือก Notes เพื่อสร้าง Outline</div>
+                            </div>
+                        </div>
                     </div>
                 `
             },
@@ -309,57 +363,87 @@
                 title: "บทที่ 3: แนะนำ Gemini Gems",
                 icon: "fa-gem",
                 content: `
-                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 3: แนะนำ Gemini Gems ผู้เชี่ยวชาญส่วนตัว</h1>
-                    <div class="lesson-content">
-                        <p><strong>Gemini Gems</strong> คือฟีเจอร์สำหรับผู้ใช้งาน Gemini Advanced ที่ให้คุณสามารถ "สร้างและปรับแต่ง AI Assistant" เฉพาะทางของคุณเองได้ (คล้ายกับ Custom GPTs ของฝั่ง OpenAI)</p>
-                        
-                        <h2>ทำไมถึงต้องใช้ Gems?</h2>
-                        <p>แทนที่คุณจะต้องมานั่งพิมพ์ Prompt ยาวๆ หรือบอกให้ AI สวมบทบาทใหม่ทุกครั้งที่คุณเริ่มแชต คุณสามารถสร้าง Gem ไว้ล่วงหน้าได้เลย เช่น:</p>
-                        <ul>
-                            <li><strong>Gem ครูสอนภาษาอังกฤษ:</strong> ที่คอยแก้แกรมม่าและอธิบายเหตุผลให้คุณฟังทุกครั้งที่คุณพิมพ์หา</li>
-                            <li><strong>Gem ผู้เชี่ยวชาญด้านโค้ด:</strong> ที่เน้นเขียน Python ตามสไตล์ Clean Code เสมอ</li>
-                            <li><strong>Gem นักวิจารณ์งานเขียน:</strong> ที่จะคอยสับและวิจารณ์บทความของคุณอย่างตรงไปตรงมา</li>
-                        </ul>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">บทที่ 3: แนะนำ Gemini Gems</h1>
+                    <p class="text-gray-600 mb-8 text-lg">Gemini Gems คือการสร้าง "ผู้เชี่ยวชาญ AI ส่วนตัว" ที่จำคำสั่ง (Prompt) ยาวๆ ของคุณไว้ล่วงหน้า ทำให้คุณไม่ต้องพิมพ์คำสั่งเดิมซ้ำๆ (ใช้ได้ใน Gemini Advanced)</p>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">การเข้าถึง Gem Manager</h3>
+                            <p class="text-gray-700 ml-4 mb-4">เข้าสู่เว็บไซต์ <strong>gemini.google.com</strong> มองหาเมนูด้านซ้ายมือด้านล่าง จะพบกับปุ่ม <strong><i class="fas fa-gem text-blue-500 mr-1"></i> Gem manager (เครื่องมือจัดการ Gem)</strong> ให้คลิกเข้าไปเลย</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Gem+Manager+Menu" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: ตำแหน่งของเมนู Gem manager</div>
+                            </div>
+                        </div>
 
-                        <h2>Pre-made Gems (Gems สำเร็จรูป)</h2>
-                        <p>Google ได้เตรียม Gems พื้นฐานที่ทรงพลังไว้ให้คุณใช้งานได้ทันที ได้แก่:</p>
-                        <ul>
-                            <li><strong>Learning coach:</strong> ผู้ช่วยอธิบายเรื่องยากๆ ให้เข้าใจง่าย</li>
-                            <li><strong>Brainstormer:</strong> ช่วยคิดไอเดียสดใหม่ ไอเดียการตลาด</li>
-                            <li><strong>Career guide:</strong> ช่วยซ้อมสัมภาษณ์งานและปรับปรุงเรซูเม่</li>
-                            <li><strong>Coding partner:</strong> ผู้ช่วยเขียนและแก้ไขโค้ด</li>
-                        </ul>
+                        <!-- Step 2 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">สำรวจและใช้งาน Pre-made Gems</h3>
+                            <p class="text-gray-700 ml-4 mb-4">Google ได้เตรียม Gems สำเร็จรูปไว้ให้แล้ว ลองเลือกกดใช้งานได้เลย เช่น:</p>
+                            <ul class="list-disc ml-10 text-gray-700 mb-4">
+                                <li><strong>Learning coach:</strong> อธิบายเรื่องยากๆ ให้เข้าใจง่ายเหมือนมีติวเตอร์ส่วนตัว</li>
+                                <li><strong>Brainstormer:</strong> ช่วยคิดไอเดียสดใหม่ หาทางออกให้ปัญหา</li>
+                                <li><strong>Coding partner:</strong> ผู้ช่วยเขียน ตรวจสอบ และอธิบายโค้ด</li>
+                            </ul>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Pre-made+Gems" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: ตัวอย่าง Pre-made Gems ของระบบ</div>
+                            </div>
+                        </div>
                     </div>
                 `
             },
             {
                 id: "lesson_4",
-                title: "บทที่ 4: การสร้าง Custom Gem ของคุณเอง",
+                title: "บทที่ 4: การสร้าง Custom Gem ของตนเอง",
                 icon: "fa-hammer",
                 content: `
-                    <h1 class="text-3xl font-bold text-gray-900 mb-6">บทที่ 4: ลงมือสร้าง Custom Gem ของคุณเอง</h1>
-                    <div class="lesson-content">
-                        <p>การสร้าง Gem ที่ดี หัวใจสำคัญอยู่ที่การเขียน <strong>"Instructions" (คำสั่งกำกับ)</strong> ที่ชัดเจนและครอบคลุม</p>
-                        
-                        <h2>ขั้นตอนการสร้าง</h2>
-                        <ol class="list-decimal pl-6 space-y-2 text-gray-700 mb-6">
-                            <li>เข้าไปที่ Gemini (Advanced) ที่เมนูด้านซ้ายคลิกที่ <strong>"Gem manager"</strong></li>
-                            <li>คลิก <strong>"New Gem"</strong></li>
-                            <li>ตั้งชื่อ Gem (เช่น "นักการตลาดโซเชียล")</li>
-                            <li>ใส่ <strong>Instructions</strong> ซึ่งเป็นหัวใจสำคัญ (ดูโครงสร้างด้านล่าง)</li>
-                        </ol>
-
-                        <h2>โครงสร้างของ Instructions ที่ดี</h2>
-                        <p>ควรประกอบด้วย 4 ส่วนหลัก (Framework: Role-Task-Context-Format)</p>
-                        <div class="bg-gray-800 text-gray-100 p-4 rounded-lg font-mono text-sm mb-4">
-                            [1. บทบาท] คุณคือ Content Creator ผู้เชี่ยวชาญด้าน TikTok มีประสบการณ์ 5 ปี<br><br>
-                            [2. งานหลัก] หน้าที่ของคุณคือการนำข้อมูลดิบที่ฉันให้ ไปเขียนเป็นสคริปต์วิดีโอสั้น ไม่เกิน 1 นาที<br><br>
-                            [3. บริบท/ข้อควรระวัง] กลุ่มเป้าหมายคือวัยรุ่นอายุ 15-24 ปี ต้องใช้ภาษาที่สนุกสนาน มีการเล่นมุกตลก ห้ามใช้คำศัพท์วิชาการที่น่าเบื่อ<br><br>
-                            [4. รูปแบบผลลัพธ์] กรุณาตอบกลับในรูปแบบตาราง 2 คอลัมน์ (วินาทีที่ / บทพูด+ภาพที่ต้องขึ้น)
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">บทที่ 4: สร้าง Custom Gem ของตนเอง</h1>
+                    <p class="text-gray-600 mb-8 text-lg">มาลงมือสร้าง Gem ที่ปรับแต่งมาเพื่อรูปแบบการทำงานของคุณโดยเฉพาะกันครับ</p>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">1</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">กดสร้าง New Gem</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ในหน้า Gem Manager ให้คลิกที่ปุ่ม <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">+ New Gem</span> ระบบจะเปิดหน้าต่างสำหรับตั้งค่า Gem ขึ้นมา ให้คุณใส่ <strong>ชื่อ Gem</strong> (เช่น "นักตรวจไวยากรณ์ภาษาอังกฤษ")</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=New+Gem+Creation" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: หน้าต่างการเริ่มสร้าง Gem ใหม่</div>
+                            </div>
                         </div>
 
-                        <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-6 rounded-r">
-                            <p class="text-sm text-green-800 m-0"><i class="fas fa-check-circle mr-2"></i> <strong>บทสรุป:</strong> ทั้ง NotebookLM และ Gemini Gems เป็นเครื่องมือที่ช่วยเพิ่ม Productivity อย่างมหาศาล หากคุณใช้ NotebookLM สำหรับ <strong>"การทำความเข้าใจและการวิจัย"</strong> และใช้ Gemini Gems สำหรับ <strong>"การลงมือผลิตชิ้นงาน"</strong> คุณจะกลายเป็นซูเปอร์พนักงานในยุค AI อย่างแท้จริง!</p>
+                        <!-- Step 2 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">2</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">เขียน Instructions ด้วยโครงสร้าง RTCF</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ในช่อง <strong>Instructions</strong> คือหัวใจสำคัญ ให้ใช้สูตร Role-Task-Context-Format เพื่อให้ AI ทำงานได้เป๊ะที่สุด พิมพ์ตามตัวอย่างนี้ลงไป:</p>
+                            <div class="bg-gray-800 text-green-400 p-5 rounded-lg font-mono text-sm mb-4 leading-relaxed ml-4 border-l-4 border-green-500">
+                                <span class="text-gray-400"># Role (บทบาท)</span><br>
+                                คุณคือผู้เชี่ยวชาญด้านการเขียนภาษาอังกฤษระดับเจ้าของภาษา (Native Speaker)<br><br>
+                                <span class="text-gray-400"># Task (หน้าที่หลัก)</span><br>
+                                หน้าที่ของคุณคือการนำข้อความภาษาอังกฤษที่ฉันส่งให้ ไปตรวจสอบไวยากรณ์ และปรับรูปประโยคให้ดูเป็นมืออาชีพมากขึ้น<br><br>
+                                <span class="text-gray-400"># Context (บริบท)</span><br>
+                                ข้อความนี้ใช้สำหรับการส่งอีเมลธุรกิจ ห้ามใช้สแลงหรือคำที่ไม่เป็นทางการ<br><br>
+                                <span class="text-gray-400"># Format (รูปแบบผลลัพธ์)</span><br>
+                                กรุณาตอบกลับโดยแบ่งเป็น 2 ส่วน: <br>
+                                1. ข้อความที่แก้ไขแล้ว (ตัวหนา)<br>
+                                2. อธิบายสั้นๆ เป็น bullet ว่าแก้ไขอะไรไปบ้างเพราะเหตุใด
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm relative">
+                            <div class="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">3</div>
+                            <h3 class="text-xl font-bold text-blue-900 mb-3 ml-4">Preview และบันทึก</h3>
+                            <p class="text-gray-700 ml-4 mb-4">ด้านขวามือจะมีหน้าต่าง <strong>Preview</strong> ให้คุณทดลองพิมพ์คุยกับ Gem ที่เพิ่งสร้าง หากพอใจแล้วให้กดปุ่ม <strong>Save</strong> ด้านบนขวา หลังจากนี้ Gem ของคุณจะไปโผล่เป็นเมนูลัดที่แถบด้านซ้ายพร้อมเรียกใช้งานได้ทุกเมื่อ!</p>
+                            <div class="mt-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img src="https://placehold.co/800x400/eff6ff/1e40af?text=Preview+and+Save" alt="" class="w-full h-auto object-cover">
+                                <div class="bg-gray-50 text-center py-2 text-sm text-gray-500 font-medium">ภาพประกอบ: การ Preview ข้อความและการกด Save</div>
+                            </div>
                         </div>
                     </div>
                 `
